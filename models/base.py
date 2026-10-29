@@ -5,5 +5,6 @@ cada novo model deve ser importado aqui.
 """
 from core.database import Base
 from models.usuario import Usuario
+from models.tarefa import Tarefa
 
-__all__ = ["Base", "Usuario"]
+__all__ = ["Base", "Usuario", "Tarefa"]
