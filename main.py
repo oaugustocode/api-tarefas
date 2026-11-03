@@ -1,5 +1,7 @@
 from fastapi import FastAPI 
+
 app = FastAPI()
-@app.get("/mensagem-ok")
+
+@app.get("/")
 async def mensagem_inicial():
-    return{"mensagem:" "ok"}
+    return{"status": "ok"}
