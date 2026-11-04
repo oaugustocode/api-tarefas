@@ -1,7 +1,9 @@
-from fastapi import FastAPI 
+from fastapi import FastAPI
+from routers.auth_router import router as auth_router
 
 app = FastAPI()
+app.include_router(auth_router)
 
 @app.get("/")
 async def mensagem_inicial():
-    return{"status": "ok"}
+    return {"status": "ok"}
