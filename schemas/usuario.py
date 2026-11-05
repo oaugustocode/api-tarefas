@@ -13,7 +13,7 @@ class UsuarioCriar(BaseModel):
             raise ValueError("A Senha ultrapassa os bytes aceitos, prefira por uma senha menor")
         return valor
 
-    
+
 class UsuarioResposta(BaseModel):
     id: int
     nome: str
