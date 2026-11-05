@@ -1,4 +1,6 @@
+from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from dependencies import abrir_sessao
@@ -19,3 +21,10 @@ def criar_conta(dados: UsuarioCriar, db: Session = Depends(abrir_sessao)):
     db.commit()
     db.refresh(novo_usuario)
     return novo_usuario
+
+@router.post("/login", status_code=200)
+async def logar_conta( db: Session, form_data: Annotated[OAuth2PasswordRequestForm, Depends[abrir_sessao]]):
+    usuario_encontrado = db.scalar(select(Usuario).where(Usuario.email == form_data.username ))
+    if not usuario_encontrado:
+        raise HTTPException(status_code=400, detail="Email ou senha incorreta.")
+    
