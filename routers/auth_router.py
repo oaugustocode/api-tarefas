@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from dependencies import abrir_sessao
 from models.usuario import Usuario
 from schemas.usuario import UsuarioCriar, UsuarioResposta
-from core.security import gerar_hash_senha, verificar_senha
+from core.security import gerar_hash_senha, verificar_senha, criar_token
 
 router = APIRouter(prefix="/auth")
 
@@ -23,8 +23,11 @@ def criar_conta(dados: UsuarioCriar, db: Session = Depends(abrir_sessao)):
     return novo_usuario
 
 @router.post("/login", status_code=200)
-async def logar_conta( db: Session, form_data: Annotated[OAuth2PasswordRequestForm, Depends[abrir_sessao]]):
+def logar_conta(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(abrir_sessao)):
     usuario_encontrado = db.scalar(select(Usuario).where(Usuario.email == form_data.username ))
     if not usuario_encontrado:
         raise HTTPException(status_code=400, detail="Email ou senha incorreta.")
+    if not verificar_senha(senha_texto=form_data.password,senha_hash=usuario_encontrado.senha_hash):
+        raise HTTPException(status_code=400, detail="Email ou senha incorreta.")
+    return {"access_token": criar_token(usuario_encontrado.id), "token_type": "bearer"}
     
